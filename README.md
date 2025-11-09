@@ -10,7 +10,7 @@ Upload reference photos and automatically find matching faces in your photo coll
 - 100% browser-based (privacy-first)
 
 ## 🚀 Live Demo
-[Try it here!](https://YOUR-USERNAME.github.io/face-matcher/)
+[Try it here!](https://arpitch25.github.io/facematch-project/)
 
 ## 👥 Created By
 Arpit, Abhijeet & Krishna
