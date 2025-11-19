@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Management System - DSA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e22ce 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            color: #e0e7ff;
+            font-size: 1.1em;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+            animation: fadeIn 1s ease;
+        }
+
+        .stat-box {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .stat-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: #666;
+            margin-top: 8px;
+            font-size: 0.95em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        .panel {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .panel-header h2 {
+            color: #1e3c72;
+            font-size: 1.8em;
+            margin-left: 10px;
+        }
+
+        .panel-icon {
+            font-size: 2em;
+        }
+
+        .form-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .form-field {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-field label {
+            color: #555;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+
+        .form-field input,
+        .form-field select,
+        .form-field textarea {
+            padding: 12px 15px;
+            border: 2px solid #e0e7ff;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .form-field input:focus,
+        .form-field select:focus,
+        .form-field textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-field textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.05em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-action {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(79, 172, 254, 0.4);
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 0.85em;
+            border-radius: 8px;
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .btn-delete:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(245, 87, 108, 0.4);
+        }
+
+        .content-area {
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .content-area::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .content-area::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 10px;
+        }
+
+        .content-area::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 10px;
+        }
+
+        .event-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 15px;
+            border-left: 5px solid #667eea;
+            transition: all 0.3s;
+            animation: slideIn 0.5s ease;
+        }
+
+        .event-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .event-card.priority-high {
+            border-left-color: #f5576c;
+        }
+
+        .event-card.priority-medium {
+            border-left-color: #ffa94d;
+        }
+
+        .event-card.priority-low {
+            border-left-color: #4facfe;
+        }
+
+        .event-card h3 {
+            color: #1e3c72;
+            margin-bottom: 12px;
+            font-size: 1.3em;
+        }
+
+        .event-detail {
+            margin: 8px 0;
+            color: #555;
+            font-size: 0.95em;
+        }
+
+        .event-detail strong {
+            color: #333;
+        }
+
+        .timestamp {
+            font-size: 0.85em;
+            color: #999;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        .event-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 4em;
+            margin-bottom: 15px;
+            opacity: 0.3;
+        }
+
+        .empty-state p {
+            font-size: 1.1em;
+        }
+
+        .queue-position {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .history-card {
+            background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+            padding: 18px;
+            margin-bottom: 12px;
+            border-radius: 12px;
+            border-left: 4px solid #4facfe;
+            animation: slideIn 0.5s ease;
+        }
+
+        .action-badge {
+            display: inline-block;
+            background: #4facfe;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .stats-container {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .priority-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .priority-badge.high {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .priority-badge.medium {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .priority-badge.low {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Event Management System</h1>
+            <p>Powered by Data Structures & Algorithms (JavaScript)</p>
+        </div>
+
+        <div class="stats-container">
+            <div class="stat-box">
+                <div class="stat-number" id="statTotal">0</div>
+                <div class="stat-label">Total Events</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number" id="statQueue">0</div>
+                <div class="stat-label">Queue Size</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number" id="statHistory">0</div>
+                <div class="stat-label">Actions History</div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-icon">➕</span>
+                    <h2>Create Event</h2>
+                </div>
+                <form id="eventForm" class="form-grid">
+                    <div class="form-field">
+                        <label for="eventName">Event Name *</label>
+                        <input type="text" id="eventName" placeholder="Enter event name" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="eventDate">Event Date *</label>
+                        <input type="date" id="eventDate" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="eventPriority">Priority Level *</label>
+                        <select id="eventPriority" required>
+                            <option value="high">🔴 High Priority</option>
+                            <option value="medium" selected>🟡 Medium Priority</option>
+                            <option value="low">🔵 Low Priority</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="eventDescription">Description *</label>
+                        <textarea id="eventDescription" placeholder="Describe your event..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Create Event</button>
+                </form>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-icon">📋</span>
+                    <h2>Event List (LinkedList)</h2>
+                </div>
+                <div id="eventList" class="content-area"></div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-icon">⏳</span>
+                    <h2>Event Queue (FIFO)</h2>
+                </div>
+                <button onclick="processQueue()" class="btn btn-action">⚡ Process Next Event</button>
+                <div id="eventQueue" class="content-area"></div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-icon">📜</span>
+                    <h2>History (Stack)</h2>
+                </div>
+                <button onclick="undoAction()" class="btn btn-action">↩️ Undo Last Action</button>
+                <div id="historyStack" class="content-area"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== DSA IMPLEMENTATIONS ====================
+
+        // Node for LinkedList
+        class Node {
+            constructor(data) {
+                this.data = data;
+                this.next = null;
+            }
+        }
+
+        // LinkedList Data Structure
+        class LinkedList {
+            constructor() {
+                this.head = null;
+                this.size = 0;
+            }
+
+            add(data) {
+                const node = new Node(data);
+                if (!this.head) {
+                    this.head = node;
+                } else {
+                    let current = this.head;
+                    while (current.next) {
+                        current = current.next;
+                    }
+                    current.next = node;
+                }
+                this.size++;
+            }
+
+            remove(id) {
+                if (!this.head) return null;
+
+                if (this.head.data.id === id) {
+                    const removed = this.head.data;
+                    this.head = this.head.next;
+                    this.size--;
+                    return removed;
+                }
+
+                let current = this.head;
+                while (current.next) {
+                    if (current.next.data.id === id) {
+                        const removed = current.next.data;
+                        current.next = current.next.next;
+                        this.size--;
+                        return removed;
+                    }
+                    current = current.next;
+                }
+                return null;
+            }
+
+            toArray() {
+                const result = [];
+                let current = this.head;
+                while (current) {
+                    result.push(current.data);
+                    current = current.next;
+                }
+                return result;
+            }
+
+            getSize() {
+                return this.size;
+            }
+        }
+
+        // Queue Data Structure (FIFO)
+        class Queue {
+            constructor() {
+                this.items = [];
+            }
+
+            enqueue(item) {
+                this.items.push(item);
+            }
+
+            dequeue() {
+                return this.items.length > 0 ? this.items.shift() : null;
+            }
+
+            peek() {
+                return this.items.length > 0 ? this.items[0] : null;
+            }
+
+            isEmpty() {
+                return this.items.length === 0;
+            }
+
+            size() {
+                return this.items.length;
+            }
+
+            toArray() {
+                return [...this.items];
+            }
+        }
+
+        // Stack Data Structure (LIFO)
+        class Stack {
+            constructor() {
+                this.items = [];
+            }
+
+            push(item) {
+                this.items.push(item);
+            }
+
+            pop() {
+                return this.items.length > 0 ? this.items.pop() : null;
+            }
+
+            peek() {
+                return this.items.length > 0 ? this.items[this.items.length - 1] : null;
+            }
+
+            isEmpty() {
+                return this.items.length === 0;
+            }
+
+            size() {
+                return this.items.length;
+            }
+
+            toArray() {
+                return [...this.items].reverse();
+            }
+        }
+
+        // ==================== APPLICATION STATE ====================
+
+        const eventList = new LinkedList();
+        const eventQueue = new Queue();
+        const historyStack = new Stack();
+        let eventCounter = 1;
+
+        // ==================== EVENT HANDLERS ====================
+
+        document.getElementById('eventForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const event = {
+                id: eventCounter++,
+                name: document.getElementById('eventName').value,
+                date: document.getElementById('eventDate').value,
+                priority: document.getElementById('eventPriority').value,
+                description: document.getElementById('eventDescription').value,
+                timestamp: new Date().toLocaleString()
+            };
+
+            eventList.add(event);
+            eventQueue.enqueue(event);
+            historyStack.push({
+                action: 'CREATE',
+                event: event,
+                time: new Date().toLocaleString()
+            });
+
+            e.target.reset();
+            updateUI();
+            showNotification('✅ Event created successfully!');
+        });
+
+        function deleteEvent(id) {
+            const removed = eventList.remove(id);
+            if (removed) {
+                eventQueue.items = eventQueue.items.filter(e => e.id !== id);
+                historyStack.push({
+                    action: 'DELETE',
+                    event: removed,
+                    time: new Date().toLocaleString()
+                });
+                updateUI();
+                showNotification('🗑️ Event deleted!');
+            }
+        }
+
+        function processQueue() {
+            const event = eventQueue.dequeue();
+            if (event) {
+                historyStack.push({
+                    action: 'PROCESS',
+                    event: event,
+                    time: new Date().toLocaleString()
+                });
+                updateUI();
+                showNotification(`⚡ Processing: ${event.name}`);
+            } else {
+                showNotification('❌ Queue is empty!');
+            }
+        }
+
+        function undoAction() {
+            const action = historyStack.pop();
+            if (action) {
+                if (action.action === 'CREATE') {
+                    eventList.remove(action.event.id);
+                    eventQueue.items = eventQueue.items.filter(e => e.id !== action.event.id);
+                } else if (action.action === 'DELETE') {
+                    eventList.add(action.event);
+                    eventQueue.enqueue(action.event);
+                } else if (action.action === 'PROCESS') {
+                    eventQueue.items.unshift(action.event);
+                }
+                updateUI();
+                showNotification('↩️ Action undone!');
+            } else {
+                showNotification('❌ Nothing to undo!');
+            }
+        }
+
+        // ==================== UI UPDATES ====================
+
+        function updateUI() {
+            updateStats();
+            renderEventList();
+            renderQueue();
+            renderHistory();
+        }
+
+        function updateStats() {
+            document.getElementById('statTotal').textContent = eventList.getSize();
+            document.getElementById('statQueue').textContent = eventQueue.size();
+            document.getElementById('statHistory').textContent = historyStack.size();
+        }
+
+        function renderEventList() {
+            const container = document.getElementById('eventList');
+            const events = eventList.toArray();
+
+            if (events.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📭</div>
+                        <p>No events yet. Create your first event!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = events.map(event => `
+                <div class="event-card priority-${event.priority}">
+                    <h3>${event.name}</h3>
+                    <div class="event-detail"><strong>📅 Date:</strong> ${event.date}</div>
+                    <div class="event-detail">
+                        <strong>🎯 Priority:</strong> 
+                        <span class="priority-badge ${event.priority}">${event.priority}</span>
+                    </div>
+                    <div class="event-detail"><strong>📝 Description:</strong> ${event.description}</div>
+                    <div class="timestamp">Created: ${event.timestamp}</div>
+                    <div class="event-actions">
+                        <button class="btn btn-small btn-delete" onclick="deleteEvent(${event.id})">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderQueue() {
+            const container = document.getElementById('eventQueue');
+            const queue = eventQueue.toArray();
+
+            if (queue.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">⏸️</div>
+                        <p>Queue is empty</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = queue.map((event, index) => `
+                <div class="event-card priority-${event.priority}">
+                    <span class="queue-position">Position ${index + 1}</span>
+                    <h3>${event.name}</h3>
+                    <div class="event-detail"><strong>📅 Date:</strong> ${event.date}</div>
+                    <div class="event-detail">
+                        <strong>🎯 Priority:</strong> 
+                        <span class="priority-badge ${event.priority}">${event.priority}</span>
+                    </div>
+                    ${index === 0 ? '<div style="color: #667eea; font-weight: 600; margin-top: 10px;">⚡ Next in line</div>' : ''}
+                </div>
+            `).join('');
+        }
+
+        function renderHistory() {
+            const container = document.getElementById('historyStack');
+            const history = historyStack.toArray();
+
+            if (history.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📝</div>
+                        <p>No history yet</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = history.map(item => `
+                <div class="history-card">
+                    <span class="action-badge">${item.action}</span>
+                    <div class="event-detail"><strong>Event:</strong> ${item.event.name}</div>
+                    <div class="timestamp">${item.time}</div>
+                </div>
+            `).join('');
+        }
+
+        function showNotification(message) {
+            alert(message);
+        }
+
+        // Initialize UI
+        updateUI();
+    </script>
+</body>
+</html>
